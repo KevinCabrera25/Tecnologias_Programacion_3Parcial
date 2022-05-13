@@ -1,0 +1,114 @@
+// Algorithm_Floyd_Warshall.cpp 
+// Kevin de Jesus Velazquez Cabrera
+
+#include <iostream>
+using namespace std;
+
+// Numero de vertices del grafo
+#define V 4
+
+// Se define el infinito que sera usado cuando los vertices no esten conectados entre si
+#define INF 99999
+
+// Funcion de impresion de la solucion de la matriz
+void printSolution(int dist[][V]);
+
+// Resolucion implementando el Algoritmo Floyd Warshall 
+void floydWarshall(int graph[][V])
+{
+    // Declaracion de variables
+    // dist[][] sera la matriz solucion
+    int dist[V][V], i, j, k;
+
+
+    // Se inicializa la matriz solucion asignandole la matriz del grafo
+    // Los valores iniciales de las distancias mas cortas son en 
+    // relacion a los caminos mas cortos sin considerar los vertices intermedios
+    for (i = 0; i < V; i++)
+    {
+        for (j = 0; j < V; j++)
+        {
+            dist[i][j] = graph[i][j];
+        }
+            
+    }
+    
+    // Se agregan todos los vertices uno por uno del conjunto de los vertices intermedios
+
+    // Antes del inicio de una iteracion se tienen las distancias mas cortas entre todos los pares de vertices
+    // tal que las distancias mas cortas consideren solamente los vertices en el conjunto {0,1,2,...,k-1}
+    // como vertices intermedios
+   
+    // Despues del final de cada iteracion el vertice k es agregado al conjunto de vertices intermedios
+    // y el conjunto se redefine como {0,1,2,...,k}
+   
+    for (k = 0; k < V; k++) 
+    {
+        // Se escogen los vertices de origen uno por uno
+        for (i = 0; i < V; i++) 
+        {
+            // Se escogen todos los vertices como destino para el origen escogido arriba
+            for (j = 0; j < V; j++) 
+            {
+                // Si el vertice k esta en el camino mas corto de i a j
+                // entonces se actualiza el valor de dist[i][j]
+                if (dist[i][j] > (dist[i][k] + dist[k][j])
+                    && (dist[k][j] != INF
+                        && dist[i][k] != INF))
+                    dist[i][j] = dist[i][k] + dist[k][j];
+            }
+        }
+    }
+
+    // Se imprime la distancia mas corta de la matriz
+    // Print the shortest distance matrix
+    printSolution(dist);
+}
+
+// Metodo de Impresion de la matriz solucion
+void printSolution(int dist[][V])
+{
+    cout << "La siguiente matriz muestra la distancia mas corta entre cada par de vertices" << endl;
+    cout << "\n" << endl;
+
+    for (int i = 0; i < V; i++) 
+    {
+        for (int j = 0; j < V; j++) 
+        {
+            if (dist[i][j] == INF)
+            {
+                cout << "INF"
+                    << "     ";
+            }                
+            else
+            {
+                cout << dist[i][j] << "     ";
+            }
+                
+        }
+        cout << endl;
+    }
+}
+
+
+int main()
+{
+    /* Se crea el siguiente grafo
+          10
+    (0)------->(3)
+     |         /|\
+   5 |          |
+     |          | 1
+    \|/         |
+    (1)------->(2)
+          3     */
+
+    int graph[V][V] = { { 0, 5, INF, 10 },
+                        { INF, 0, 3, INF },
+                        { INF, INF, 0, 1 },
+                        { INF, INF, INF, 0 } };
+
+    // Se llama al Metodo de Impresion de la solucion
+    floydWarshall(graph);
+   
+}
